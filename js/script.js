@@ -1,15 +1,17 @@
-const overview = document.querySelector(".overview")
+const overview = document.querySelector(".overview");
+const repoList = document.querySelector(".repo-list");
+
 const username = "Silverpool64";
 
 async function getGitHub() {
 	const request = await fetch(`https://api.github.com/users/${username}`);
 	const data = await request.json();
-	displayInfo(data);
+	displayUserInfo(data);
 }
 
 getGitHub();
 
-function displayInfo(data) {
+function displayUserInfo(data) {
 	const div = document.createElement("div");
 	div.classList.add("user-info");
 	div.innerHTML = `
@@ -24,4 +26,20 @@ function displayInfo(data) {
     </div>
     `;
     overview.append(div);
+    gitRepos();
+}
+
+async function gitRepos() {
+	const fetchRepos = await fetch(`https://api.github.com/users/${username}/repos?sort=updated&per_page=100`);
+	const repoData = await fetchRepos.json();
+	displayRepoInfo(repoData);
+}
+
+function displayRepoInfo(repos) {
+	for (repo of repos) {
+		const repoItem = document.createElement("li");
+    	repoItem.classList.add("repo");
+    	repoItem.innerHTML = `<h3>${repo.name}</h3>`;
+    	repoList.append(repoItem);
+	}
 }
